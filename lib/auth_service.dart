@@ -33,29 +33,16 @@ class AuthService {
     String email,
     String password,
   ) async {
-    try {
-      UserCredential result = await _firebaseAuth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      return result.user;
-    } on FirebaseAuthException catch (e) {
-      // Handle specific Firebase authentication errors
-      debugPrint(e.message);
-      return null;
-    } catch (e) {
-      debugPrint(e.toString());
-      return null;
-    }
+    UserCredential result = await _firebaseAuth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    return result.user;
   }
 
   // Sign out
   Future<void> signOut() async {
-    try {
-      return await _firebaseAuth.signOut();
-    } catch (e) {
-      debugPrint(e.toString());
-    }
+    return await _firebaseAuth.signOut();
   }
 
   // Get current user
