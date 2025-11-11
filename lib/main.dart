@@ -117,8 +117,11 @@ class _RegisterEmailSectionState extends State<RegisterEmailSection> {
             controller: _passwordController,
             decoration: InputDecoration(labelText: 'Password'),
             validator: (value) {
-              if (value?.isEmpty ?? true) {
+              if (value == null || value.trim().isEmpty) {
                 return 'Please enter some text';
+              }
+              if (value.trim().length < 6) {
+                return 'Password must be at least 6 characters long';
               }
               return null;
             },
