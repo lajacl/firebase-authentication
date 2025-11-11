@@ -1,3 +1,4 @@
+import 'package:firebase_authentication/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -29,10 +30,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final AuthService _authService = AuthService();
   void _signOut() async {
     final messenger = ScaffoldMessenger.of(context);
-    await _auth.signOut();
+    await _authService.signOut();
     messenger.showSnackBar(SnackBar(content: Text('Signed out successfully')));
   }
 
@@ -53,10 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            RegisterEmailSection(auth: _auth),
-            EmailPasswordForm(auth: _auth),
-          ],
+          children: <Widget>[RegisterEmailSection(), EmailPasswordForm()],
         ),
       ),
     );
@@ -64,8 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class RegisterEmailSection extends StatefulWidget {
-  const RegisterEmailSection({super.key, required this.auth});
-  final FirebaseAuth auth;
+  const RegisterEmailSection({super.key});
   @override
   State<RegisterEmailSection> createState() => _RegisterEmailSectionState();
 }
@@ -74,20 +71,26 @@ class _RegisterEmailSectionState extends State<RegisterEmailSection> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
   bool _success = false;
   bool _initialState = true;
   String? _userEmail;
+
   void _register() async {
     try {
-      await widget.auth.createUserWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
+      User? user = await _authService.registerWithEmailAndPassword(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
       );
-      setState(() {
-        _success = true;
-        _userEmail = _emailController.text;
-        _initialState = false;
-      });
+      if (user != null) {
+        setState(() {
+          _success = true;
+          _userEmail = _emailController.text;
+          _initialState = false;
+        });
+      } else {
+        _success = false;
+      }
     } catch (e) {
       setState(() {
         _success = false;
@@ -159,8 +162,7 @@ class _RegisterEmailSectionState extends State<RegisterEmailSection> {
 }
 
 class EmailPasswordForm extends StatefulWidget {
-  const EmailPasswordForm({super.key, required this.auth});
-  final FirebaseAuth auth;
+  const EmailPasswordForm({super.key});
   @override
   State<EmailPasswordForm> createState() => _EmailPasswordFormState();
 }
@@ -169,20 +171,25 @@ class _EmailPasswordFormState extends State<EmailPasswordForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
   bool _success = false;
   bool _initialState = true;
   String _userEmail = '';
   void _signInWithEmailAndPassword() async {
     try {
-      await widget.auth.signInWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
+      User? user = await _authService.signInWithEmailAndPassword(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
       );
-      setState(() {
-        _success = true;
-        _userEmail = _emailController.text;
-        _initialState = false;
-      });
+      if (user != null) {
+        setState(() {
+          _success = true;
+          _userEmail = _emailController.text;
+          _initialState = false;
+        });
+      } else {
+        _success = false;
+      }
     } catch (e) {
       setState(() {
         _success = false;
