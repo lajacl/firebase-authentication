@@ -107,8 +107,11 @@ class _RegisterEmailSectionState extends State<RegisterEmailSection> {
             controller: _emailController,
             decoration: InputDecoration(labelText: 'Email'),
             validator: (value) {
-              if (value?.isEmpty ?? true) {
+              if (value == null || value.trim().isEmpty) {
                 return 'Please enter some text';
+              }
+              if (!value.contains(RegExp(r'.+@.+\..+'))) {
+                return 'Please enter a valid email';
               }
               return null;
             },
