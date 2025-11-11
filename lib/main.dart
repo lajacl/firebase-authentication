@@ -15,16 +15,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Firebase Auth Demo',
-      home: MyHomePage(title: 'Firebase Auth Demo'),
-    );
+    return MaterialApp(title: 'Firebase Auth Demo', home: MyHomePage());
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
+  const MyHomePage({super.key});
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -41,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text('Firebase Auth Demo'),
         actions: <Widget>[
           ElevatedButton(
             onPressed: () {
@@ -85,7 +82,6 @@ class _RegisterEmailSectionState extends State<RegisterEmailSection> {
         _emailController.text.trim(),
         _passwordController.text.trim(),
       );
-      debugPrint('***User $user');
       if (user != null) {
         setState(() {
           _success = true;
@@ -192,6 +188,11 @@ class _EmailPasswordFormState extends State<EmailPasswordForm> {
           _userEmail = _emailController.text.trim();
           _initialState = false;
         });
+        navigatorState.pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => ProfileScreen(userEmail: _userEmail),
+          ),
+        );
       } else {
         _success = false;
       }
@@ -260,6 +261,49 @@ class _EmailPasswordFormState extends State<EmailPasswordForm> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class ProfileScreen extends StatelessWidget {
+  final String userEmail;
+  const ProfileScreen({super.key, required this.userEmail});
+
+  @override
+  Widget build(BuildContext context) {
+    final AuthService _authService = AuthService();
+
+    void signOut() async {
+      final messenger = ScaffoldMessenger.of(context);
+      final navigatorState = Navigator.of(context);
+
+      await _authService.signOut();
+      messenger.showSnackBar(
+        SnackBar(content: Text('Signed out successfully')),
+      );
+      navigatorState.pushReplacement(
+        MaterialPageRoute(builder: (context) => MyHomePage()),
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        actions: <Widget>[
+          ElevatedButton(
+            onPressed: () {
+              signOut();
+            },
+            child: Text('Sign Out'),
+          ),
+        ],
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[Text(userEmail)],
+        ),
       ),
     );
   }
