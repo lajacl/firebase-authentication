@@ -27,27 +27,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final AuthService _authService = AuthService();
-  void _signOut() async {
-    final messenger = ScaffoldMessenger.of(context);
-    await _authService.signOut();
-    messenger.showSnackBar(SnackBar(content: Text('Signed out successfully')));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Firebase Auth Demo'),
-        actions: <Widget>[
-          ElevatedButton(
-            onPressed: () {
-              _signOut();
-            },
-            child: Text('Sign Out'),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: Text('Firebase Auth Demo')),
       body: AuthenticationScreen(),
     );
   }
