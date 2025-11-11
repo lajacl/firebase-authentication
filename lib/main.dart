@@ -56,19 +56,22 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            isLogin ? EmailPasswordForm() : RegisterEmailSection(),
-            TextButton(
-              onPressed: toggleScreen,
-              child: Text(
-                isLogin
-                    ? 'Need to sign up? Register HERE'
-                    : 'Have an account? Login HERE',
+        child: Padding(
+          padding: EdgeInsetsGeometry.symmetric(horizontal: 24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              isLogin ? EmailPasswordForm() : RegisterEmailSection(),
+              TextButton(
+                onPressed: toggleScreen,
+                child: Text(
+                  isLogin
+                      ? 'Need to sign up? Register HERE'
+                      : 'Have an account? Login HERE',
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -322,12 +325,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Text('Sign Out'),
           ),
         ],
+        actionsPadding: EdgeInsets.symmetric(horizontal: 24),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[Text(_userEmail)],
+        child: Padding(
+          padding: EdgeInsetsGeometry.symmetric(horizontal: 24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[Text(_userEmail)],
+          ),
         ),
       ),
     );
