@@ -15,7 +15,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'Firebase Auth Demo', home: MyHomePage());
+    return MaterialApp(
+      title: 'Firebase Auth Demo',
+      home: MyHomePage(),
+      debugShowCheckedModeBanner: false,
+    );
   }
 }
 
