@@ -51,10 +51,12 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[RegisterEmailSection(), EmailPasswordForm()],
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[RegisterEmailSection(), EmailPasswordForm()],
+          ),
         ),
       ),
     );
@@ -74,14 +76,16 @@ class _RegisterEmailSectionState extends State<RegisterEmailSection> {
   final AuthService _authService = AuthService();
   bool _success = false;
   bool _initialState = true;
-  String? _userEmail;
+  String _userEmail = '';
 
   void _register() async {
+    final navigatorState = Navigator.of(context);
     try {
       User? user = await _authService.registerWithEmailAndPassword(
         _emailController.text.trim(),
         _passwordController.text.trim(),
       );
+      debugPrint('***User $user');
       if (user != null) {
         setState(() {
           _success = true;
@@ -176,6 +180,7 @@ class _EmailPasswordFormState extends State<EmailPasswordForm> {
   bool _initialState = true;
   String _userEmail = '';
   void _signInWithEmailAndPassword() async {
+    final navigatorState = Navigator.of(context);
     try {
       User? user = await _authService.signInWithEmailAndPassword(
         _emailController.text.trim(),
@@ -184,7 +189,7 @@ class _EmailPasswordFormState extends State<EmailPasswordForm> {
       if (user != null) {
         setState(() {
           _success = true;
-          _userEmail = _emailController.text;
+          _userEmail = _emailController.text.trim();
           _initialState = false;
         });
       } else {
