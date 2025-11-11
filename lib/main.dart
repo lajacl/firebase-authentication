@@ -59,6 +59,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            isLogin ? EmailPasswordForm() : RegisterEmailSection(),
             TextButton(
               onPressed: toggleScreen,
               child: Text(
@@ -67,7 +68,6 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     : 'Have an account? Login HERE',
               ),
             ),
-            isLogin ? EmailPasswordForm() : RegisterEmailSection(),
           ],
         ),
       ),
