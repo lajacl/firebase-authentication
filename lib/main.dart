@@ -48,12 +48,44 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[RegisterEmailSection(), EmailPasswordForm()],
-          ),
+      body: AuthenticationScreen(),
+    );
+  }
+}
+
+class AuthenticationScreen extends StatefulWidget {
+  const AuthenticationScreen({super.key});
+
+  @override
+  State<AuthenticationScreen> createState() => _AuthenticationScreenState();
+}
+
+class _AuthenticationScreenState extends State<AuthenticationScreen> {
+  bool isLogin = true;
+
+  void toggleScreen() {
+    setState(() {
+      isLogin = !isLogin;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TextButton(
+              onPressed: toggleScreen,
+              child: Text(
+                isLogin
+                    ? 'Need to sign up? Register HERE'
+                    : 'Have an account? Login HERE',
+              ),
+            ),
+            isLogin ? EmailPasswordForm() : RegisterEmailSection(),
+          ],
         ),
       ),
     );
@@ -73,10 +105,9 @@ class _RegisterEmailSectionState extends State<RegisterEmailSection> {
   final AuthService _authService = AuthService();
   bool _success = false;
   bool _initialState = true;
-  String _userEmail = '';
+  String? _userEmail = '';
 
   void _register() async {
-    final navigatorState = Navigator.of(context);
     try {
       User? user = await _authService.registerWithEmailAndPassword(
         _emailController.text.trim(),
@@ -189,9 +220,7 @@ class _EmailPasswordFormState extends State<EmailPasswordForm> {
           _initialState = false;
         });
         navigatorState.pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => ProfileScreen(userEmail: _userEmail),
-          ),
+          MaterialPageRoute(builder: (context) => ProfileScreen()),
         );
       } else {
         _success = false;
@@ -266,27 +295,40 @@ class _EmailPasswordFormState extends State<EmailPasswordForm> {
   }
 }
 
-class ProfileScreen extends StatelessWidget {
-  final String userEmail;
-  const ProfileScreen({super.key, required this.userEmail});
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final AuthService _authService = AuthService();
+  String _userEmail = '';
+
+  void getUserEmail() {
+    User? user = _authService.getCurrentUser();
+    _userEmail = user?.email ?? '';
+  }
+
+  void signOut() async {
+    final messenger = ScaffoldMessenger.of(context);
+    final navigatorState = Navigator.of(context);
+
+    await _authService.signOut();
+    messenger.showSnackBar(SnackBar(content: Text('Signed out successfully')));
+    navigatorState.pushReplacement(
+      MaterialPageRoute(builder: (context) => MyHomePage()),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserEmail();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final AuthService _authService = AuthService();
-
-    void signOut() async {
-      final messenger = ScaffoldMessenger.of(context);
-      final navigatorState = Navigator.of(context);
-
-      await _authService.signOut();
-      messenger.showSnackBar(
-        SnackBar(content: Text('Signed out successfully')),
-      );
-      navigatorState.pushReplacement(
-        MaterialPageRoute(builder: (context) => MyHomePage()),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(
         actions: <Widget>[
@@ -302,7 +344,7 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[Text(userEmail)],
+          children: <Widget>[Text(_userEmail)],
         ),
       ),
     );
