@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -14,18 +13,11 @@ class AuthService {
     String email,
     String password,
   ) async {
-    try {
-      UserCredential result = await _firebaseAuth
-          .createUserWithEmailAndPassword(email: email, password: password);
-      return result.user;
-    } on FirebaseAuthException catch (e) {
-      // Handle specific Firebase authentication errors
-      debugPrint(e.message);
-      return null;
-    } catch (e) {
-      debugPrint(e.toString());
-      return null;
-    }
+    UserCredential result = await _firebaseAuth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    return result.user;
   }
 
   // Sign in with email and password
