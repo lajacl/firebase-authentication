@@ -61,7 +61,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              isLogin ? EmailPasswordForm() : RegisterEmailSection(),
+              isLogin
+                  ? EmailPasswordForm()
+                  : RegisterEmailSection(goToLogin: toggleScreen),
               TextButton(
                 onPressed: toggleScreen,
                 child: Text(
@@ -79,7 +81,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
 }
 
 class RegisterEmailSection extends StatefulWidget {
-  const RegisterEmailSection({super.key});
+  final Function goToLogin;
+  const RegisterEmailSection({super.key, required this.goToLogin});
   @override
   State<RegisterEmailSection> createState() => _RegisterEmailSectionState();
 }
@@ -104,6 +107,7 @@ class _RegisterEmailSectionState extends State<RegisterEmailSection> {
           _success = true;
           _userEmail = _emailController.text;
           _initialState = false;
+          widget.goToLogin();
         });
       } else {
         _success = false;
